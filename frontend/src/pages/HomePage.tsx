@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { BrIcon } from '../components/BrIcon';
 import { useAuth } from '../context/AuthContext';
 
 export function HomePage() {
@@ -22,7 +23,7 @@ export function HomePage() {
         </h1>
         <p className="max-w-lg text-sm leading-relaxed text-mist-200/70">
           Записывайтесь на занятия, следите за остатком уроков и управляйте студией.
-          Стоимость абонементов — в белорусских рублях (Br).
+          Стоимость абонементов — в белорусских рублях (<BrIcon />).
         </p>
         <div className="flex flex-wrap gap-3">
           <Link to="/schedule" className="btn-primary">

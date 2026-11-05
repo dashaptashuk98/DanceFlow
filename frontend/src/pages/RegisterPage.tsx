@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ApiError } from '../api/client';
 import { useRegister } from '../api/hooks';
+import { AgreementCheckbox } from '../components/AgreementCheckbox';
 import { AlertBanner } from '../components/Modal';
 import { useAuth } from '../context/AuthContext';
 
@@ -16,6 +17,7 @@ export function RegisterPage() {
     password: '',
   });
   const [error, setError] = useState('');
+  const [agreementAccepted, setAgreementAccepted] = useState(false);
 
   if (isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
@@ -24,6 +26,10 @@ export function RegisterPage() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    if (!agreementAccepted) {
+      setError('Примите пользовательское соглашение, чтобы зарегистрироваться');
+      return;
+    }
     try {
       const result = await register.mutateAsync(form);
       loginSuccess(result.token, result.user);
@@ -96,6 +102,12 @@ export function RegisterPage() {
             required
           />
         </div>
+
+        <AgreementCheckbox
+          id="register-agreement"
+          checked={agreementAccepted}
+          onChange={setAgreementAccepted}
+        />
 
         {error && <AlertBanner type="error">{error}</AlertBanner>}
 

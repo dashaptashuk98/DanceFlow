@@ -1,10 +1,10 @@
-/** Форматирование сумм в белорусских рублях (Br) */
+/** Числовая часть суммы в белорусских рублях; знак валюты добавляет BrAmount. */
 export function formatBr(amount: number | string | null | undefined): string {
   const n = Number(amount ?? 0);
-  return `${n.toLocaleString('ru-BY', {
+  return n.toLocaleString('ru-BY', {
     minimumFractionDigits: 0,
     maximumFractionDigits: 2,
-  })} Br`;
+  });
 }
 
 export function formatDate(iso: string, options?: Intl.DateTimeFormatOptions) {

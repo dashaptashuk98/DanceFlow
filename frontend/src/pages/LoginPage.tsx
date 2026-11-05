@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { ApiError } from '../api/client';
 import { useLogin } from '../api/hooks';
+import { AgreementCheckbox } from '../components/AgreementCheckbox';
 import { AlertBanner } from '../components/Modal';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,6 +12,7 @@ export function LoginPage() {
   const login = useLogin();
   const [loginValue, setLoginValue] = useState('');
   const [password, setPassword] = useState('');
+  const [agreementAccepted, setAgreementAccepted] = useState(false);
   const [error, setError] = useState('');
 
   if (isAuthenticated) {
@@ -20,6 +22,10 @@ export function LoginPage() {
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    if (!agreementAccepted) {
+      setError('Примите пользовательское соглашение, чтобы войти');
+      return;
+    }
     try {
       const result = await login.mutateAsync({ login: loginValue, password });
       loginSuccess(result.token, result.user);
@@ -66,6 +72,12 @@ export function LoginPage() {
             required
           />
         </div>
+
+        <AgreementCheckbox
+          id="login-agreement"
+          checked={agreementAccepted}
+          onChange={setAgreementAccepted}
+        />
 
         {error && <AlertBanner type="error">{error}</AlertBanner>}
 

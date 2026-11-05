@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 interface EmptyStateProps {
   icon?: ReactNode;
   title: string;
-  description?: string;
+  description?: ReactNode;
   actionLabel?: string;
   actionTo?: string;
   onAction?: () => void;

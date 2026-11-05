@@ -34,10 +34,11 @@ import {
   useUsers,
 } from '../api/hooks';
 import { EmptyState } from '../components/EmptyState';
+import { BrAmount, BrIcon } from '../components/BrIcon';
 import { AlertBanner, ConfirmModal, Modal } from '../components/Modal';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { formatBr, toLocalISODate } from '../lib/format';
+import { toLocalISODate } from '../lib/format';
 import type { Subscription, Training } from '../types';
 
 type Tab = 'schedule' | 'subscriptions' | 'attendance' | 'analytics';
@@ -61,6 +62,7 @@ export function AdminPage() {
   const chartGrid = theme === 'dark' ? 'rgba(208,221,217,0.15)' : 'rgba(36,51,56,0.12)';
 
   const [tab, setTab] = useState<Tab>('schedule');
+  const [subscriptionSort, setSubscriptionSort] = useState<'asc' | 'desc'>('asc');
   const [form, setForm] = useState(emptyTraining);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [flash, setFlash] = useState('');
@@ -95,6 +97,15 @@ export function AdminPage() {
   const users = useUsers(isAuthenticated && user?.role === 'Администратор');
   const subscriptions = useAllSubscriptions(tab === 'subscriptions');
   const analytics = useAnalytics(tab === 'analytics');
+  const sortedSubscriptions = useMemo(() => {
+    const collator = new Intl.Collator('ru', { sensitivity: 'base', numeric: true });
+    const direction = subscriptionSort === 'asc' ? 1 : -1;
+    return [...(subscriptions.data?.subscriptions ?? [])].sort((a, b) => {
+      const nameOrder = collator.compare(a.first_name ?? '', b.first_name ?? '');
+      const loginOrder = collator.compare(a.login ?? '', b.login ?? '');
+      return direction * (nameOrder || loginOrder) || b.subscription_id - a.subscription_id;
+    });
+  }, [subscriptions.data?.subscriptions, subscriptionSort]);
   const trainingBookings = useTrainingBookings(selectedTrainingId);
 
   const createTraining = useCreateTraining();
@@ -263,7 +274,7 @@ export function AdminPage() {
     <div className="space-y-6">
       <div>
         <h1 className="font-display text-3xl font-bold text-content">Админ-панель</h1>
-        <p className="mt-1 text-sm text-muted">Управление студией DanceFlow · валюта: Br</p>
+        <p className="mt-1 text-sm text-muted">Управление студией DanceFlow · валюта: <BrIcon /></p>
       </div>
 
       <div className="flex flex-wrap gap-2">
@@ -513,7 +524,7 @@ export function AdminPage() {
               </div>
             </div>
             <div>
-              <label className="label-field">Сумма оплаты (Br)</label>
+              <label className="label-field">Сумма оплаты (<BrIcon />)</label>
               <input
                 type="number"
                 min={0}
@@ -523,7 +534,7 @@ export function AdminPage() {
                 onChange={(e) => setSubForm({ ...subForm, amount: e.target.value })}
                 title="Белорусские рубли"
               />
-              <p className="mt-1 text-xs text-muted">Валюта: белорусские рубли (Br)</p>
+              <p className="mt-1 text-xs text-muted">Валюта: белорусские рубли (<BrIcon />)</p>
             </div>
             <button type="submit" className="btn-primary w-full">
               Выдать абонемент
@@ -531,7 +542,26 @@ export function AdminPage() {
           </form>
 
           <div className="space-y-3">
-            {subscriptions.data?.subscriptions.map((s) => (
+            <div className="flex flex-wrap items-end justify-between gap-3">
+              <h2 className="font-display text-lg font-semibold text-content">
+                Существующие абонементы
+              </h2>
+              <div>
+                <label className="label-field" htmlFor="subscription-sort">
+                  По имени студента
+                </label>
+                <select
+                  id="subscription-sort"
+                  className="input-field"
+                  value={subscriptionSort}
+                  onChange={(event) => setSubscriptionSort(event.target.value as 'asc' | 'desc')}
+                >
+                  <option value="asc">А–Я</option>
+                  <option value="desc">Я–А</option>
+                </select>
+              </div>
+            </div>
+            {sortedSubscriptions.map((s) => (
               <article
                 key={s.subscription_id}
                 className="panel flex flex-wrap items-center justify-between gap-3 p-4"
@@ -654,7 +684,7 @@ export function AdminPage() {
                   ['Записи', analytics.data.overview.confirmed_bookings],
                   ['Посещения', analytics.data.overview.attended],
                   ['Активные абонементы', analytics.data.overview.active_subscriptions ?? activeSubsCount],
-                  ['Выручка, Br', formatBr(analytics.data.overview.total_payments)],
+                  ['Выручка', <BrAmount amount={analytics.data.overview.total_payments} />],
                 ].map(([label, value]) => (
                   <div key={String(label)} className="panel p-5">
                     <p className="text-sm text-muted">{label}</p>
@@ -749,7 +779,7 @@ export function AdminPage() {
                     <li className="flex justify-between border-b border-line py-2 text-muted">
                       <span>Суммарная выручка</span>
                       <span className="font-semibold text-content">
-                        {formatBr(analytics.data.overview.total_payments)}
+                        <BrAmount amount={analytics.data.overview.total_payments} />
                       </span>
                     </li>
                     <li className="flex justify-between border-b border-line py-2 text-muted">
@@ -764,7 +794,7 @@ export function AdminPage() {
                         className="flex justify-between border-b border-line py-2 text-muted"
                       >
                         <span>{row.month}</span>
-                        <span className="text-content">{formatBr(row.amount)}</span>
+                        <span className="text-content"><BrAmount amount={row.amount} /></span>
                       </li>
                     ))}
                   </ul>
@@ -842,7 +872,7 @@ export function AdminPage() {
               />
             </div>
             <div>
-              <label className="label-field">Сумма оплаты (Br)</label>
+              <label className="label-field">Сумма оплаты (<BrIcon />)</label>
               <input
                 type="number"
                 min={0}
@@ -851,7 +881,7 @@ export function AdminPage() {
                 value={renewForm.amount}
                 onChange={(e) => setRenewForm({ ...renewForm, amount: e.target.value })}
               />
-              <p className="mt-1 text-xs text-muted">Белорусские рубли (Br)</p>
+              <p className="mt-1 text-xs text-muted">Белорусские рубли (<BrIcon />)</p>
             </div>
           </div>
         )}

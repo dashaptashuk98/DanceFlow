@@ -1,34 +1,27 @@
+import { formatBr } from '../lib/format';
+
 export function BrIcon({ className = '' }: { className?: string }) {
   return (
     <svg
-      viewBox="0 0 20 24"
+      viewBox="0 0 310 380"
       fill="currentColor"
-      aria-label="Br"
-      className={`inline-block h-[1em] w-auto align-baseline ${className}`}
+      role="img"
+      aria-label="Белорусский рубль"
+      focusable="false"
+      className={`inline-block h-[1em] w-auto shrink-0 align-[-0.125em] ${className}`}
     >
-      {/* Вертикальная левая черта */}
-      <rect x="1" y="1" width="2.5" height="22" rx="0.5" />
-      {/* Верхняя полка Б */}
-      <rect x="1" y="1" width="13" height="2.5" rx="0.5" />
-      {/* Верхняя дуга Б */}
-      <path d="M3.5 3.5 H12 Q18.5 3.5 18.5 9 Q18.5 14 12 14 H3.5 Z" />
-      {/* Нижняя дуга Д */}
-      <path d="M3.5 14 H12 Q18.5 14 18.5 19.5 Q18.5 23 12 23 H3.5 Z" />
-      {/* Горизонтальная перечёркивающая черта */}
-      <rect x="0" y="17" width="9" height="2.2" rx="0.5" />
+      <path
+        fillRule="evenodd"
+        d="M54 0H266V42H96V156H184C256 156 310 202 310 268C310 334 260 380 192 380H54V290H0V248H54V0ZM96 198V248H192V290H96V338H190C236 338 268 310 268 268C268 226 235 198 190 198H96Z"
+      />
     </svg>
   );
 }
 
 export function BrAmount({ amount }: { amount: number | string | null | undefined }) {
-  const n = Number(amount ?? 0);
-  const formatted = n.toLocaleString('ru-BY', {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  });
   return (
-    <span className="inline-flex items-baseline gap-0.5">
-      {formatted}&thinsp;<BrIcon />
+    <span className="whitespace-nowrap">
+      {formatBr(amount)}&thinsp;<BrIcon />
     </span>
   );
 }

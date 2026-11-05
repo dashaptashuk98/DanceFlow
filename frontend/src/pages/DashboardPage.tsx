@@ -15,6 +15,7 @@ import {
 } from "../api/hooks";
 import { Avatar } from "../components/Avatar";
 import { EmptyState } from "../components/EmptyState";
+import { BrIcon } from "../components/BrIcon";
 import { AlertBanner, ConfirmModal } from "../components/Modal";
 import { StreakBadge } from "../components/StreakBadge";
 import { StreakCelebrateModal } from "../components/StreakCelebrateModal";
@@ -306,7 +307,7 @@ export function DashboardPage() {
                   <EmptyState
                     icon={<Ticket size={22} strokeWidth={1.5} />}
                     title="Нет активных абонементов"
-                    description="Обратитесь к администратору студии, чтобы оформить абонемент. Оплата в белорусских рублях (Br)."
+                    description={<>Обратитесь к администратору студии, чтобы оформить абонемент. Оплата в белорусских рублях (<BrIcon />).</>}
                     actionLabel="Перейти к расписанию"
                     actionTo="/schedule"
                   />

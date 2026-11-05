@@ -9,6 +9,7 @@ import {
   useStyles,
 } from '../api/hooks';
 import { EmptyState } from '../components/EmptyState';
+import { BrIcon } from '../components/BrIcon';
 import { AlertBanner, Modal } from '../components/Modal';
 import { useAuth } from '../context/AuthContext';
 import { addDays, formatDate, formatTime, toLocalISODate } from '../lib/format';
@@ -284,7 +285,7 @@ export function SchedulePage() {
             {activeSubs.length === 0 ? (
               <p className="mt-4 text-red-600 dark:text-red-300">
                 Нет активного абонемента. Обратитесь к администратору. Стоимость абонементов
-                указывается в Br (белорусские рубли).
+                указывается в <BrIcon /> (белорусские рубли).
               </p>
             ) : (
               <div className="mt-4">
