@@ -26,9 +26,11 @@ export function HomePage() {
           Стоимость абонементов — в белорусских рублях (<BrIcon />).
         </p>
         <div className="flex flex-wrap gap-3">
-          <Link to="/schedule" className="btn-primary">
-            Смотреть расписание
-          </Link>
+          {user?.role !== 'Администратор' && (
+            <Link to="/schedule" className="btn-primary">
+              Смотреть расписание
+            </Link>
+          )}
           {isAuthenticated ? (
             <Link
               to={user?.role === 'Администратор' ? '/admin' : '/dashboard'}

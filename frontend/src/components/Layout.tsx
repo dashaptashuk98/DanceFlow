@@ -36,9 +36,11 @@ export function Layout() {
           </NavLink>
 
           <nav className="flex flex-wrap items-center gap-3 sm:gap-5">
-            <NavLink to="/schedule" className={linkClass}>
-              Расписание
-            </NavLink>
+            {!isAdmin && (
+              <NavLink to="/schedule" className={linkClass}>
+                Расписание
+              </NavLink>
+            )}
             {isAuthenticated && (
               <NavLink to="/dashboard" className={linkClass}>
                 Личный кабинет

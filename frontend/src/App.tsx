@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AdminPage } from './pages/AdminPage';
 import { DashboardPage } from './pages/DashboardPage';
@@ -19,6 +19,11 @@ const queryClient = new QueryClient({
   },
 });
 
+function ScheduleRoute() {
+  const { user } = useAuth();
+  return user?.role === 'Администратор' ? <Navigate to="/admin" replace /> : <SchedulePage />;
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -30,7 +35,7 @@ export default function App() {
                 <Route index element={<HomePage />} />
                 <Route path="login" element={<LoginPage />} />
                 <Route path="register" element={<RegisterPage />} />
-                <Route path="schedule" element={<SchedulePage />} />
+                <Route path="schedule" element={<ScheduleRoute />} />
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="admin" element={<AdminPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
